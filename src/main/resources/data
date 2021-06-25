@@ -1,0 +1,7 @@
+insert into userTable(first_Name, last_Name, age, profile_Name,password,email,account_Created) values
+('Johannes','Hedman',29,'jh','1234','mail@mail.com','2015-10-10');
+
+
+INSERT INTO recipe (title,views, published_Date, instructions,user_id) VALUES
+  ('Pasta Carbonara', 0, '2015-05-05','1. Blanda sås, 2. Koka pasta, 3. Stek Bacon, 4. Blanda allt', 1);
+  
