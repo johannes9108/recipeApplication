@@ -23,6 +23,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 			+ " left join fetch r.quantityPerIngredient "
 			+ " left join fetch r.foodCategories ")
 	List<Recipe> findAllFetched();
+
+
 	
 	
 //	@Query(value =" Select r from Recipe r join fetch r.user.i")

@@ -1,5 +1,6 @@
 package com.iths.jh.RecipeApplication.domain;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,31 +8,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 @Entity
 @NoArgsConstructor
@@ -45,15 +31,30 @@ import lombok.Setter;
 //                            @ColumnResult(name = "title"), 
 //                            @ColumnResult(name = "price"), 
 //                            @ColumnResult(name = "authorName")}))
-public class Recipe {
+public class Recipe implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+
+	@PositiveOrZero(message = "Cooking Time mustn't be negative")
+	private int cookingTime;
+	@PositiveOrZero( message = "Preparing Time mustn't be negative")
+	private int preparingTime;
+
+
+	@NotBlank
+	@Column(nullable = false)
+	@Size(min = 3, message = "Title needs to be at least 3 characters long")
 	private String title;
+
+	@Column(nullable = false)
 	private Long views;
+	@Column(nullable = false)
+	@PastOrPresent
 	private LocalDate publishedDate;
+
 
 	private String instructions;
 //	, joinColumns = {
@@ -74,7 +75,8 @@ public class Recipe {
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<FoodCategory> foodCategories;
 
-	
+
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 

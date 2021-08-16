@@ -20,7 +20,7 @@ import com.iths.jh.RecipeApplication.repositories.RecipeRepository;
 import com.iths.jh.RecipeApplication.repositories.UserRepository;
 
 @RestController
-public class EntryPoint {
+public class HomeController {
 	
 		@RequestMapping("/")
 	    public String index(){

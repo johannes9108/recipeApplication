@@ -9,7 +9,9 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
+import javax.validation.Valid;
 
+import com.iths.jh.RecipeApplication.utilities.SearchParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ public class RecipeService implements ServiceInterface<Recipe> {
 
 	@Autowired
 	RecipeRepository recipeRepository;
+
 	@Autowired
 	UserRepository userRepository;
 
@@ -88,7 +91,7 @@ public class RecipeService implements ServiceInterface<Recipe> {
 	
 
 	@Override
-	public Optional<Recipe> updateById(Recipe newData) {
+	public Optional<Recipe> updateRecipe(Recipe newData) {
 		try {
 			Optional<Recipe> recipeToBeUpdated = recipeRepository.findByIdFetched(newData.getId());
 			System.out.println(recipeToBeUpdated);
@@ -124,6 +127,11 @@ public class RecipeService implements ServiceInterface<Recipe> {
 			log.error(e.getLocalizedMessage());
 			throw new RuntimeException("Problem with creating service");
 		}
+	}
+
+	@Override
+	public List<Recipe> findAll(SearchParams searchParams) {
+		return recipeRepository.findAllFetched();
 	}
 
 }
