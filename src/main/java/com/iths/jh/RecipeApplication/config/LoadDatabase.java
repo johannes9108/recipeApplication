@@ -1,6 +1,7 @@
 package com.iths.jh.RecipeApplication.config;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -30,8 +31,8 @@ public class LoadDatabase {
 	CommandLineRunner initDatabase(UserRepository userRepository, RecipeRepository recipeRepository,
 			IngredientRepository ingredientRepository, FoodCategoryRepository foodCategoryRepository) {
 		return args ->{
-			User user = new User("Johannes","Hedman",20,"jh","1234",LocalDate.now(),"mail@mail.com");
-			User user2 = new User("Anders","Erkson",20,"jh","1234",LocalDate.now(),"mail@mail.com");
+			User user = new User("Johannes","Hedman",20,"jh","1234", LocalDate.now(),"mail@mail.com");
+			User user2 = new User("Anders","Erkson",20,"jh","1234", LocalDate.now(),"mail@mail.com");
 			Recipe recipe = new Recipe("Pasta Carbonara",0L, LocalDate.now(),"1. Blanda");
 			Recipe recipe2 = new Recipe("Kött Carbonara",0L, LocalDate.now(),"1. Blanda");
 			Recipe recipe3 = new Recipe("Fisk Carbonara",0L, LocalDate.now(),"1. Blanda");

@@ -1,8 +1,11 @@
 package com.iths.jh.RecipeApplication.repositories;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.iths.jh.RecipeApplication.utilities.ServiceErrorMessages;
+import com.iths.jh.RecipeApplication.utilities.ServiceResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -24,10 +27,16 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 			+ " left join fetch r.foodCategories ")
 	List<Recipe> findAllFetched();
 
+	default ServiceResponse<Recipe> deleteByIdWithReturnValue(Long id){
+		Optional<Recipe> deleteObject = findByIdFetched(id);
+		if (deleteObject.isPresent()) {
+			deleteById(id);
+			return new ServiceResponse<Recipe>(deleteObject.get(), null);
+		}
+		return new ServiceResponse<>(null, Collections.singletonList(ServiceErrorMessages.RECIPE.couldNotFind(id)));
+	}
 
-	
-	
-//	@Query(value =" Select r from Recipe r join fetch r.user.i")
+	//	@Query(value =" Select r from Recipe r join fetch r.user.i")
 //	List<Recipe> getAllRecipesFetchedWithUser();
 
 //	@Query(value = "select new com.iths.jh.RecipeApplication.domain.RecipeInfo(r.id, r.title, r.views, r.publishedDate, r.instructions) from Recipe r")

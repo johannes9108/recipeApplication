@@ -2,11 +2,8 @@ package com.iths.jh.RecipeApplication.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -14,9 +11,15 @@ import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.tomcat.jni.Local;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Entity
@@ -39,8 +42,10 @@ public class Recipe implements Serializable {
 
 
 	@PositiveOrZero(message = "Cooking Time mustn't be negative")
+	@Value(value = "0")
 	private int cookingTime;
 	@PositiveOrZero( message = "Preparing Time mustn't be negative")
+	@Value(value = "0")
 	private int preparingTime;
 
 
@@ -50,9 +55,12 @@ public class Recipe implements Serializable {
 	private String title;
 
 	@Column(nullable = false)
+	@Value(value = "0")
 	private Long views;
 	@Column(nullable = false)
 	@PastOrPresent
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
 	private LocalDate publishedDate;
 
 
@@ -116,5 +124,7 @@ public class Recipe implements Serializable {
 	public boolean removeFoodCategory(long id) {
 		return foodCategories.removeIf(category->category.getId()==id);
 	}
+
+
 
 }

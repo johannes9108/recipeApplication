@@ -1,6 +1,7 @@
 package com.iths.jh.RecipeApplication.services;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -18,13 +19,13 @@ public class UserService {
 
 	private HashSet<User> users = new HashSet<User>();
 	{
-		User newUser = new User("Johannes", "Hedman", 10,"jh","1234",LocalDate.now(), "mail@mail.com");
+		User newUser = new User("Johannes", "Hedman", 10,"jh","1234", LocalDate.now(), "mail@mail.com");
 		users.add(newUser);
-		newUser = new User("Kalle", "Svensson", 10,"jh","1234",LocalDate.now(), "mail@mail.com");
+		newUser = new User("Kalle", "Svensson", 10,"jh","1234", LocalDate.now(), "mail@mail.com");
 		users.add(newUser);
-		newUser = new User("Ali", "Abduzeedo", 10,"jh","1234",LocalDate.now(), "mail@mail.com");
+		newUser = new User("Ali", "Abduzeedo", 10,"jh","1234", LocalDate.now(), "mail@mail.com");
 		users.add(newUser);
-		newUser = new User("Karin", "Rovén", 10,"jh","1234",LocalDate.now(), "mail@mail.com");
+		newUser = new User("Karin", "Rovén", 10,"jh","1234", LocalDate.now(), "mail@mail.com");
 		users.add(newUser);
 
 	}

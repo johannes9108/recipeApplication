@@ -9,16 +9,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.iths.jh.RecipeApplication.utilities.SearchParams;
+import com.iths.jh.RecipeApplication.utilities.ServiceResponse;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.iths.jh.RecipeApplication.domain.Recipe;
 import com.iths.jh.RecipeApplication.services.RecipeService;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 
 @RestController
@@ -30,95 +33,78 @@ public class RecipeController {
 
 	Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
-	@GetMapping
-	public List<Recipe> getAllRecipes(SearchParams searchParams) {
+	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<List<Recipe>> getAllRecipes(SearchParams searchParams) {
 
-		try {
-			List<Recipe> recipes = recipeService.findAll(searchParams);
-			recipes.forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
-			return recipes;
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
-
-			return null;
-		}
+			ServiceResponse<Recipe> response = recipeService.findAll(searchParams);
+			if (response.isSucessful()) {
+				response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
+				return ResponseEntity.ok(response.getResponseObjects());
+			}
+			else{
+				return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+			}
 	}
 
 	@GetMapping
-	@RequestMapping("{id}")
-	public Optional<Recipe> getRecipeById(@PathVariable Long id) {
-		return recipeService.findById(id);
+	@RequestMapping(value = "{id}",produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
+		ServiceResponse<Recipe> response = recipeService.findById(id);
+		if (response.isSucessful()) {
+			return ResponseEntity.ok(response.getResponseObject());
+		}
+		else{
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Optional<Recipe> createRecipe(@RequestBody @Valid Recipe newRecipe) {
-		try {
+	public ResponseEntity<Recipe> createRecipe(@RequestBody @Valid Recipe newRecipe) {
+		logger.debug("Inside POST Recipe");
 
-			logger.debug("Inside POST Recipe");
-
-			Optional<Recipe> serviceResponse = recipeService.create(newRecipe);
-			if (serviceResponse.isPresent()) {
-
-			System.out.println(serviceResponse.get());
-				return serviceResponse;
-			}
-			return Optional.empty();
-		} catch (RuntimeException e) {
-
-			return Optional.empty();
+		ServiceResponse<Recipe> response = recipeService.create(newRecipe);
+		if (response.isSucessful()) {
+			logger.info(response.toString());
+			return ResponseEntity.ok(response.getResponseObject());
 		}
-
+		else{
+			return ResponseEntity.badRequest().build();
+		}
 	}
 
 	@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Optional<Recipe> updateRecipe(@RequestBody Recipe newRecipe) {
+	public ResponseEntity<Recipe> updateRecipe(@RequestBody Recipe newRecipe) {
 
-		try {
-
-			Optional<Recipe> serviceResponse = recipeService.updateRecipe(newRecipe);
-			if (serviceResponse.isPresent()) {
-				return serviceResponse;
-			}
-			return Optional.empty();
-		} catch (RuntimeException e) {
-
-			return Optional.empty();
+		ServiceResponse<Recipe> response = recipeService.update(newRecipe);
+		if (response.isSucessful()) {
+			return ResponseEntity.ok(response.getResponseObject());
+		}
+		else{
+			return ResponseEntity.badRequest().build();
 		}
 	}
 
-	@PatchMapping(path = "{id}", consumes = "application/json-patch+json")
-	public Optional<Recipe> patchUpdateRecipe(@PathVariable Long id, @RequestBody JsonPatch patch) {
-		try {
-			Recipe recipe = recipeService.findById(id).orElseThrow(RuntimeException::new);
-			Recipe recipePatched = applyPatchToRecipe(patch, recipe);
-			logger.info("Updated recipe: " + recipePatched.toString());
-			System.out.println("Updated recipe: " + recipePatched.toString());
-			recipeService.updateRecipe(recipePatched);
-			return Optional.of(recipePatched);
-		} catch (JsonPatchException | JsonProcessingException | RuntimeException e) {
-			return Optional.empty();
+	@PatchMapping(path = "{id}", consumes = "application/json-patch+json",produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Recipe> patchRecipe(@PathVariable Long id, @RequestBody JsonPatch patch) {
+		ServiceResponse<Recipe> response = recipeService.patch(id,patch);
+		if (response.isSucessful()) {
+			return ResponseEntity.ok(response.getResponseObject());
+		}
+		else{
+			return ResponseEntity.badRequest().build();
 		}
 	}
 
-	private Recipe applyPatchToRecipe(
-			JsonPatch patch, Recipe targetRecipe) throws JsonPatchException, JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode patched = patch.apply(objectMapper.convertValue(targetRecipe, JsonNode.class));
-		return objectMapper.treeToValue(patched, Recipe.class);
-	}
 
-	@DeleteMapping("{id}")
-	public Optional<Recipe> deleteRecipe(@PathVariable(value = "id") Long recipeId) {
-		try {
 
-			Optional<Recipe> serviceResponse = recipeService.deleteById(recipeId);
-			if (serviceResponse.isPresent()) {
-				return serviceResponse;
-			}
-			return Optional.empty();
-		} catch (RuntimeException e) {
-
-			return Optional.empty();
+	@DeleteMapping(value = "{id}",produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Recipe> deleteRecipe(@PathVariable Long id) {
+		ServiceResponse<Recipe> response = recipeService.deleteById(id);
+		if (response.isSucessful()) {
+			return ResponseEntity.ok(response.getResponseObject());
+		}
+		else{
+			return ResponseEntity.badRequest().build();
 		}
 	}
 
