@@ -89,7 +89,7 @@ public class LoadDatabase {
 			userRepository.save(user2);
 			
 			
-			recipeRepository.findAllFetched().forEach(System.out::println);;
+//			recipeRepository.findAllFetched().forEach(System.out::println);;
 //			System.out.println(r);
 //			if(r.isPresent())
 //			System.out.println(userRepository.findByIdFetched(1L));

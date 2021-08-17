@@ -17,6 +17,10 @@ import lombok.Setter;
 @Setter
 public class FoodCategory {
 
+	enum FoodCategoryPredefined{
+		VEGAN,DAIRY, MEAT, FISH;
+	}
+
 	public FoodCategory(String name) {
 		this.name = name;
 	}

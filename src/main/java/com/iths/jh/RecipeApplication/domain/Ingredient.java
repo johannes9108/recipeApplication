@@ -16,6 +16,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Ingredient {
+
+	enum IngredientPredefined{
+		MILK, WHEAT, CREAM, TOMATOES
+	}
 	public Ingredient(String name) {
 		this.name = name;
 		

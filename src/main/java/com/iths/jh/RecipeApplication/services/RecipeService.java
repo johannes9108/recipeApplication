@@ -2,6 +2,7 @@ package com.iths.jh.RecipeApplication.services;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -16,6 +17,9 @@ import com.iths.jh.RecipeApplication.utilities.SearchParams;
 import com.iths.jh.RecipeApplication.utilities.ServiceErrorMessages;
 import com.iths.jh.RecipeApplication.utilities.ServiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.iths.jh.RecipeApplication.domain.FoodCategory;
@@ -63,7 +67,23 @@ public class RecipeService implements ServiceInterface<Recipe> {
         ServiceResponse<Recipe> response = new ServiceResponse<Recipe>();
         try {
             System.out.println("Return all Recipes");
-            List<Recipe> recipe = recipeRepository.findAllFetched();
+            Pageable pageable = PageRequest.of(0, 2);
+            List<Recipe> listOfRecipes = recipeRepository.findAllFetched(pageable);
+            response.setResponseObjects(listOfRecipes);
+        } catch (Exception e) {
+            response.addErrorMessage(e.getLocalizedMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public ServiceResponse<Recipe> findAll(SearchParams searchParams) {
+        ServiceResponse<Recipe> response = new ServiceResponse<>();
+        try {
+            System.out.println("Return all Recipes");
+            Pageable pageable = PageRequest.of(0, 10);
+            List<Recipe> listOfRecipes = recipeRepository.findAllFetched(pageable);
+            response.setResponseObjects(listOfRecipes);
         } catch (Exception e) {
             response.addErrorMessage(e.getLocalizedMessage());
         }
@@ -114,7 +134,7 @@ public class RecipeService implements ServiceInterface<Recipe> {
             recipeToBeUpdated = newData;
 //				if(newData.getFoodCategories()==null)
 //					newData.setFoodCategories(new HashSet<FoodCategory>());
-            Recipe recipe = recipeRepository.saveAndFlush(recipeToBeUpdated);
+            Recipe recipe = recipeRepository.save(recipeToBeUpdated);
             System.out.println("Updated recipe with id: " + recipe.getId());
             response.setResponseObject(recipe);
         } catch (Exception e) {
@@ -133,7 +153,7 @@ public class RecipeService implements ServiceInterface<Recipe> {
             //TODO PERMANENT USER FOR DEVELOPMENT
             User user = userRepository.findById(1L).get();
             newRecipe.setUser(user);
-            Recipe recipe = recipeRepository.saveAndFlush(newRecipe);
+            Recipe recipe = recipeRepository.save(newRecipe);
             response.setResponseObject(recipe);
         } catch (Exception e) {
             response.addErrorMessage(e.getLocalizedMessage());
@@ -171,15 +191,5 @@ public class RecipeService implements ServiceInterface<Recipe> {
     }
 
 
-    @Override
-    public ServiceResponse<Recipe> findAll(SearchParams searchParams) {
-        ServiceResponse<Recipe> response = new ServiceResponse<>();
-        try {
-            System.out.println("Return all Recipes");
-            response.setResponseObjects(recipeRepository.findAllFetched());
-        } catch (Exception e) {
-            response.addErrorMessage(e.getLocalizedMessage());
-        }
-        return response;
-    }
+
 }

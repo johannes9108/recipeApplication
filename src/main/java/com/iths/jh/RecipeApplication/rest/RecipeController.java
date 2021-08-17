@@ -14,6 +14,8 @@ import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +36,8 @@ public class RecipeController {
 	Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<List<Recipe>> getAllRecipes(SearchParams searchParams) {
-
-			ServiceResponse<Recipe> response = recipeService.findAll(searchParams);
+	public ResponseEntity<List<Recipe>> getAllRecipes() {
+			ServiceResponse<Recipe> response = recipeService.findAll();
 			if (response.isSucessful()) {
 				response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
 				return ResponseEntity.ok(response.getResponseObjects());
@@ -44,6 +45,19 @@ public class RecipeController {
 			else{
 				return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 			}
+	}
+
+	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<List<Recipe>> getAllRecipes(SearchParams searchParams) {
+
+		ServiceResponse<Recipe> response = recipeService.findAll(searchParams);
+		if (response.isSucessful()) {
+			response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
+			return ResponseEntity.ok(response.getResponseObjects());
+		}
+		else{
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+		}
 	}
 
 	@GetMapping
