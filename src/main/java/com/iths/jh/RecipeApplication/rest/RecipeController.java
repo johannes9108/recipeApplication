@@ -47,9 +47,9 @@ public class RecipeController {
 			}
 	}
 
-	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<List<Recipe>> getAllRecipes(SearchParams searchParams) {
-
+	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, path = "search")
+	public ResponseEntity<List<Recipe>> getAllRecipes(@RequestBody SearchParams searchParams) {
+		logger.warn(searchParams.toString());
 		ServiceResponse<Recipe> response = recipeService.findAll(searchParams);
 		if (response.isSucessful()) {
 			response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));

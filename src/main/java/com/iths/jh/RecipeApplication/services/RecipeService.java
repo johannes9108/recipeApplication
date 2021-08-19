@@ -82,7 +82,7 @@ public class RecipeService implements ServiceInterface<Recipe> {
         try {
             System.out.println("Return all Recipes");
             Pageable pageable = PageRequest.of(0, 10);
-            List<Recipe> listOfRecipes = recipeRepository.findAllFetched(pageable);
+            List<Recipe> listOfRecipes = recipeRepository.findAllFetched(searchParams);
             response.setResponseObjects(listOfRecipes);
         } catch (Exception e) {
             response.addErrorMessage(e.getLocalizedMessage());

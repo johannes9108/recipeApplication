@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.iths.jh.RecipeApplication.repositories.customQueries.RecipeRepositoryCustom;
 import com.iths.jh.RecipeApplication.utilities.ServiceErrorMessages;
 import com.iths.jh.RecipeApplication.utilities.ServiceResponse;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.iths.jh.RecipeApplication.domain.Recipe;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeRepositoryCustom {
 	
 	@Query(value = "Select r from Recipe r"
 			+ " inner join fetch r.user "

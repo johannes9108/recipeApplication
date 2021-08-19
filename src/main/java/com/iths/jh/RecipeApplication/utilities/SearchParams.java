@@ -14,8 +14,11 @@ import java.util.Set;
 @AllArgsConstructor
 public class SearchParams {
 
+    // Higheest priority
+    private Set<String> words;
+
+    // Secondary priority
     private List<FoodCategory> categoryList;
     private List<Ingredient> ingredientList;
-    private Set<String> words;
 
 }
