@@ -1,5 +1,7 @@
 package com.iths.jh.RecipeApplication.repositories.customQueries;
 
+import com.iths.jh.RecipeApplication.domain.FoodCategory;
+import com.iths.jh.RecipeApplication.domain.Ingredient;
 import com.iths.jh.RecipeApplication.domain.Recipe;
 import com.iths.jh.RecipeApplication.domain.User;
 import com.iths.jh.RecipeApplication.utilities.SearchParams;
@@ -24,19 +26,26 @@ public class RecipeRepositoryCustomImpl implements RecipeRepositoryCustom {
         CriteriaQuery<Recipe> cq = cb.createQuery(Recipe.class);
         Root<Recipe> root = cq.from(Recipe.class);
         Fetch<Recipe, User> users = root.fetch("user");
-//                .fetch("quantityPerIngredient")
-//                .fetch("foodCategories");
         LinkedList<Predicate> predicateLinkedList = new LinkedList<>();
         for (String word : searchParams.getWords()) {
-            System.out.println(word);
-
             predicateLinkedList.add(cb.like(
                     cb.lower(
                             root.get("title")),
                     "%" + word.toLowerCase() + "%"));
         }
-        Predicate[] predArray = new Predicate[predicateLinkedList.size()];
-        cq.where(cb.or(predicateLinkedList.toArray(predArray)));
+        for (FoodCategory category : searchParams.getCategoryList()) {
+            predicateLinkedList.add(cb.like(root.get("foodCategory").get("name"), category.getName()));
+        }
+//        for (Ingredient ingredient : searchParams.getIngredientList()) {
+//            predicateLinkedList.add(cb.like(root.get("ingredient").get("name"), ingredient.getName()));
+//        }
+
+        Predicate[] predArray;
+
+            predArray = new Predicate[predicateLinkedList.size()];
+            cq.where(cb.or(predicateLinkedList.toArray(predArray)));
+
+
 
         cq.distinct(true);
         TypedQuery<Recipe> q = entityManager.createQuery(cq);
