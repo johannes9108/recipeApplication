@@ -63,11 +63,11 @@ public class RecipeService implements ServiceInterface<Recipe> {
     }
 
     @Override
-    public ServiceResponse<Recipe> findAll() {
+    public ServiceResponse<Recipe> findAll(int page, int size) {
         ServiceResponse<Recipe> response = new ServiceResponse<Recipe>();
         try {
             System.out.println("Return all Recipes");
-            Pageable pageable = PageRequest.of(0, 2);
+            Pageable pageable = PageRequest.of(page>=1?page-1:0, Math.max(size, 1));
             List<Recipe> listOfRecipes = recipeRepository.findAllFetched(pageable);
             response.setResponseObjects(listOfRecipes);
         } catch (Exception e) {
@@ -77,13 +77,13 @@ public class RecipeService implements ServiceInterface<Recipe> {
     }
 
     @Override
-    public ServiceResponse<Recipe> findAll(SearchParams searchParams) {
+    public ServiceResponse<Recipe> findAll(SearchParams searchParams, int page, int size) {
         ServiceResponse<Recipe> response = new ServiceResponse<>();
         try {
             System.out.println("Return all Recipes");
-            Pageable pageable = PageRequest.of(0, 10);
-            List<Recipe> listOfRecipes = recipeRepository.findAllFetched(searchParams);
-            response.setResponseObjects(listOfRecipes);
+            Pageable pageable = PageRequest.of(page>=1?page-1:0, Math.max(size, 1));
+            Page<Recipe> pagedRecipes = recipeRepository.findAllFetched(searchParams, pageable);
+            response.setResponseObjects(pagedRecipes.getContent());
         } catch (Exception e) {
             response.addErrorMessage(e.getLocalizedMessage());
         }

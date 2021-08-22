@@ -36,8 +36,8 @@ public class RecipeController {
 	Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<List<Recipe>> getAllRecipes() {
-			ServiceResponse<Recipe> response = recipeService.findAll();
+	public ResponseEntity<List<Recipe>> getAllRecipes(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+			ServiceResponse<Recipe> response = recipeService.findAll(page,size);
 			if (response.isSucessful()) {
 				response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
 				return ResponseEntity.ok(response.getResponseObjects());
@@ -48,9 +48,10 @@ public class RecipeController {
 	}
 
 	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, path = "search")
-	public ResponseEntity<List<Recipe>> getAllRecipes(@RequestBody SearchParams searchParams) {
+	public ResponseEntity<List<Recipe>> getAllRecipes(@RequestBody SearchParams searchParams, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
 		logger.warn(searchParams.toString());
-		ServiceResponse<Recipe> response = recipeService.findAll(searchParams);
+		System.out.println("page: " + page + ", size: " + size );
+		ServiceResponse<Recipe> response = recipeService.findAll(searchParams, page, size);
 		if (response.isSucessful()) {
 			response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
 			return ResponseEntity.ok(response.getResponseObjects());

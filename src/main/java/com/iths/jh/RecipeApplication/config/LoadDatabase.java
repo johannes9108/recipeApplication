@@ -4,17 +4,13 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
+import com.iths.jh.RecipeApplication.domain.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.iths.jh.RecipeApplication.domain.FoodCategory;
-import com.iths.jh.RecipeApplication.domain.Ingredient;
-import com.iths.jh.RecipeApplication.domain.Quantity;
-import com.iths.jh.RecipeApplication.domain.Recipe;
-import com.iths.jh.RecipeApplication.domain.User;
 import com.iths.jh.RecipeApplication.repositories.FoodCategoryRepository;
 import com.iths.jh.RecipeApplication.repositories.IngredientRepository;
 import com.iths.jh.RecipeApplication.repositories.RecipeRepository;
@@ -43,32 +39,34 @@ public class LoadDatabase {
 			
 			Ingredient ingredient = new Ingredient("Bacon");
 			ingredientRepository.save(ingredient);
-			recipe.getQuantityPerIngredient().put(ingredient.getId(), new Quantity(10,"DL"));
-			recipe2.getQuantityPerIngredient().put(ingredient.getId(), new Quantity(23,"DL"));
+			recipe.addIngredient("500g Äpplen");
+			recipe2.addIngredient("3kg Vit Bröd");
 			ingredient = new Ingredient("Apples");
-			ingredientRepository.save(ingredient);
-			recipe2.getQuantityPerIngredient().put(ingredient.getId(), new Quantity(43,"DL"));
-			ingredient = new Ingredient("Mushrooms");
-			ingredientRepository.save(ingredient);
-			recipe3.getQuantityPerIngredient().put(ingredient.getId(), new Quantity(52,"DL"));
-			recipe4.getQuantityPerIngredient().put(ingredient.getId(), new Quantity(113,"DL"));
-			FoodCategory foodCategory = new FoodCategory("Pasta");
+//			ingredientRepository.save(ingredient);
+			recipe2.addIngredient("500g Päron");
+//			ingredient = new Ingredient("Mushrooms");
+//			ingredientRepository.save(ingredient);
+			recipe3.addIngredient("200g Nötkött");
+			recipe4.addIngredient("1 Msk  Rapsolja");
+			FoodCategory foodCategory = new FoodCategory(FoodCategory.FoodCategoryPredefined.MEAT);
 			foodCategoryRepository.save(foodCategory);
 			recipe.addFoodCategory(foodCategory);
 			
 			user.addRecipe(recipe);
 			
 			recipe3.addFoodCategory(foodCategory);
-			foodCategory = new FoodCategory("Vegan");
+			foodCategory = new FoodCategory(FoodCategory.FoodCategoryPredefined.VEGAN);
 			foodCategoryRepository.save(foodCategory);
 			recipe3.addFoodCategory(foodCategory);
 			user.addRecipe(recipe3);
 			
 			
 			user2.addRecipe(recipe2);
-			foodCategory = new FoodCategory("Meat");
+			foodCategory = new FoodCategory(FoodCategory.FoodCategoryPredefined.MEAT);
 			foodCategoryRepository.save(foodCategory);
 			recipe2.addFoodCategory(foodCategory);
+			foodCategory = new FoodCategory("SPICY");
+			foodCategoryRepository.save(foodCategory);
 			recipe4.addFoodCategory(foodCategory);
 			
 			user2.addRecipe(recipe4);

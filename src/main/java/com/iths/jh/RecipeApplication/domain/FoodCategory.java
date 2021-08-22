@@ -17,23 +17,26 @@ import lombok.Setter;
 @Setter
 public class FoodCategory {
 
-	enum FoodCategoryPredefined{
-		VEGAN,DAIRY, MEAT, FISH;
-	}
+    @Id
+    private String name;
 
-	public FoodCategory(String name) {
-		this.name = name;
-	}
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	
-	private String name;
+    public enum FoodCategoryPredefined {
+        VEGAN, DAIRY, MEAT, FISH
+    }
 
-	@Override
-	public String toString() {
-		return "Food Category:" + name;
-	}
-	
-	
+    public FoodCategory(String name) {
+        this.name = name;
+
+    }
+    public FoodCategory(FoodCategoryPredefined name) {
+        this.name = name.toString();
+    }
+
+
+    @Override
+    public String toString() {
+        return "Food Category:" + name;
+    }
+
+
 }

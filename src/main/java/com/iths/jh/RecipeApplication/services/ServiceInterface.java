@@ -11,11 +11,11 @@ import com.iths.jh.RecipeApplication.utilities.ServiceResponse;
 public interface ServiceInterface<T> {
 	
 	public  ServiceResponse<T> findById(Long id);
-	public  ServiceResponse<T> findAll();
+	public  ServiceResponse<T> findAll(int page, int size);
 	public  ServiceResponse<T> deleteById(Long id);
 	public  ServiceResponse<T> update(T newData);
 	public ServiceResponse<T> create(T newData);
 	public ServiceResponse<T> patch(Long id, JsonPatch patch);
 
-    public  ServiceResponse<T> findAll(SearchParams searchParams);
+    public  ServiceResponse<T> findAll(SearchParams searchParams, int page, int size);
 }
