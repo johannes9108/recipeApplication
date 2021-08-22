@@ -20,7 +20,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeRep
 	
 	@Query(value = "Select r from Recipe r"
 			+ " inner join fetch r.user "
-			+ " left join fetch r.quantityPerIngredient "
 			+ " left join fetch r.foodCategories "
 			+ "where r.id = ?1 "
 			+ "")
@@ -28,7 +27,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeRep
 
 	@Query(value ="Select distinct r from Recipe r"
 			+ " inner join fetch r.user "
-			+ " left join fetch r.quantityPerIngredient "
 			+ " left join fetch r.foodCategories ")
 	List<Recipe> findAllFetched(Pageable pageable);
 

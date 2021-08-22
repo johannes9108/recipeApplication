@@ -3,13 +3,9 @@ package com.iths.jh.RecipeApplication.domain;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.Map.Entry;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -18,9 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 @Entity
 @NoArgsConstructor
@@ -65,16 +59,21 @@ public class Recipe implements Serializable {
 
 
 	private String instructions;
+
+	@ElementCollection
+	@CollectionTable(name = "recipe_Ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
+	private List<String> ingredientEntries;
+
 //	, joinColumns = {
 //			@JoinColumn(nullable = false, name = "recipe_id", referencedColumnName = "id"),
 //			@JoinColumn(name = "ingredient", referencedColumnName = "id") }
 
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "Quantities",
-	joinColumns = {
-	})
-	@MapKeyColumn(name = "Ingredient_FK",nullable = false)
-	private Map<Long, Quantity> quantityPerIngredient;
+//	@ElementCollection(fetch = FetchType.LAZY)
+//	@CollectionTable(name = "Quantities",
+//	joinColumns = {
+//	})
+//	@MapKeyColumn(name = "Ingredient_FK",nullable = false)
+//	private Map<Long, Quantity> quantityPerIngredient;
 
 	// TODO CASCADING IS ONLY FOR DEVELOPMENT
 	//TODO Try to get CASCADE.PERSIST to work? Detached entity passed to persist Currently
@@ -95,13 +94,13 @@ public class Recipe implements Serializable {
 		this.publishedDate = publishedDate;
 		this.instructions = instructions;
 		foodCategories = new HashSet<>();
-		quantityPerIngredient = new HashMap<>();
+		ingredientEntries = new LinkedList<>();
 	}
 
 	@Override
 	public String toString() {
 		String userString = user != null ? user.fullName() : "No user";
-		String ingredientsString = quantityPerIngredient.size() > 0 ? formattedIngredients() : "No ingredients";
+		String ingredientsString = ingredientEntries.size()>0? formattedIngredients() : "No ingredients";
 		return "Recipe [id=" + id + ", title=" + title + ", views=" + views + ", publishedDate=" + publishedDate
 				+ ", instructions=" + instructions + ", ingredients=" + ingredientsString + ", foodCategories="
 				+ foodCategories + ", user=" + userString + "]";
@@ -110,21 +109,21 @@ public class Recipe implements Serializable {
 	private String formattedIngredients() {
 		StringBuilder builder = new StringBuilder("");
 		int counter = 1;
-		for (Entry<Long, Quantity> es : quantityPerIngredient.entrySet()) {
-			builder.append("|" + counter++ + ":" + es.getValue().getQuantity() + " " + es.getValue().getUnit() + " "
-					+ es.getKey());
+		for (String ingredient : ingredientEntries) {
+			builder.append(counter++ + ":" + ingredient);
 		}
-		builder.append("|");
 		return builder.toString();
 	}
 	
 	public boolean addFoodCategory(FoodCategory newFoodCategory) {
 		return foodCategories.add(newFoodCategory);
 	}
-	public boolean removeFoodCategory(long id) {
-		return foodCategories.removeIf(category->category.getId()==id);
+//	public boolean removeFoodCategory(long id) {
+//		return foodCategories.removeIf(category->category.getId()==id);
+//	}
+
+
+	public void addIngredient(String s) {
+		ingredientEntries.add(s);
 	}
-
-
-
 }

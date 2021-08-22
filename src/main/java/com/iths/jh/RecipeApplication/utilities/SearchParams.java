@@ -19,6 +19,6 @@ public class SearchParams {
 
     // Secondary priority
     private List<FoodCategory> categoryList;
-    private List<Ingredient> ingredientList;
+    private Set<String> ingredientList;
 
 }
