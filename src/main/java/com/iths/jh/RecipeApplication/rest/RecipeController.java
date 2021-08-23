@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import com.iths.jh.RecipeApplication.services.ServiceInterface;
 import com.iths.jh.RecipeApplication.utilities.SearchParams;
 import com.iths.jh.RecipeApplication.utilities.ServiceResponse;
 import org.apache.coyote.Response;
@@ -31,9 +32,21 @@ import javax.validation.Valid;
 public class RecipeController {
 
 	@Autowired
-	private RecipeService recipeService;
+	private ServiceInterface<Recipe> recipeService;
 
 	Logger logger = LoggerFactory.getLogger(RecipeController.class);
+
+	@GetMapping
+	@RequestMapping(value = "{id}",produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
+		ServiceResponse<Recipe> response = recipeService.findById(id);
+		if (response.isSucessful()) {
+			return ResponseEntity.ok(response.getResponseObject());
+		}
+		else{
+			return ResponseEntity.notFound().build();
+		}
+	}
 
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<List<Recipe>> getAllRecipes(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
@@ -61,17 +74,7 @@ public class RecipeController {
 		}
 	}
 
-	@GetMapping
-	@RequestMapping(value = "{id}",produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
-		ServiceResponse<Recipe> response = recipeService.findById(id);
-		if (response.isSucessful()) {
-			return ResponseEntity.ok(response.getResponseObject());
-		}
-		else{
-			return ResponseEntity.notFound().build();
-		}
-	}
+
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Recipe> createRecipe(@RequestBody @Valid Recipe newRecipe) {

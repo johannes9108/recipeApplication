@@ -40,28 +40,23 @@ public class RecipeService implements ServiceInterface<Recipe> {
     @Autowired
     UserRepository userRepository;
 
-    private HashMap<Long, Recipe> recipes = new HashMap<Long, Recipe>();
-
-    {
-        Recipe newRecipe = new Recipe("Pasta Carbonara", 10L, LocalDate.now(), "Stek Fläsk|Koka pasta");
-        newRecipe.setId(1L);
-        recipes.put(newRecipe.getId(), newRecipe);
-        newRecipe = new Recipe("Raggmunkar", 10L, LocalDate.now(), "Stek Fläsk|Koka pasta");
-        newRecipe.setId(2L);
-        recipes.put(newRecipe.getId(), newRecipe);
-        newRecipe = new Recipe("Plättar", 10L, LocalDate.now(), "Stek Fläsk|Koka pasta");
-        newRecipe.setId(3L);
-        recipes.put(newRecipe.getId(), newRecipe);
-        newRecipe = new Recipe("Entrecóte", 10L, LocalDate.now(), "Stek Fläsk|Koka pasta");
-        newRecipe.setId(4L);
-        recipes.put(newRecipe.getId(), newRecipe);
-
-    }
-
     public void printSomething() {
         System.out.println("Testing");
     }
 
+    @Override
+    public ServiceResponse<Recipe> findById(Long id) {
+        ServiceResponse<Recipe> response = new ServiceResponse<Recipe>();
+
+        try {
+            System.out.println("Return all Recipes");
+            Recipe recipe = recipeRepository.findByIdFetched(id).orElseThrow(NoSuchElementException::new);
+            response.setResponseObject(recipe);
+        } catch (Exception e) {
+            response.addErrorMessage(e.getLocalizedMessage());
+        }
+        return response;
+    }
     @Override
     public ServiceResponse<Recipe> findAll(int page, int size) {
         ServiceResponse<Recipe> response = new ServiceResponse<Recipe>();
@@ -91,37 +86,21 @@ public class RecipeService implements ServiceInterface<Recipe> {
     }
 
     @Override
-    public ServiceResponse<Recipe> findById(Long id) {
-        ServiceResponse<Recipe> response = new ServiceResponse<Recipe>();
-
+    public ServiceResponse<Recipe> create(Recipe newRecipe) {
+        ServiceResponse<Recipe> response = new ServiceResponse<>();
         try {
-            System.out.println("Return all Recipes");
-            Recipe recipe = recipeRepository.findByIdFetched(id).orElseThrow(NoSuchElementException::new);
+            // Prevents an accidental update by discarding the id
+            newRecipe.setId(null);
+            //TODO PERMANENT USER FOR DEVELOPMENT
+            User user = userRepository.findById(1L).get();
+            newRecipe.setUser(user);
+            Recipe recipe = recipeRepository.save(newRecipe);
             response.setResponseObject(recipe);
         } catch (Exception e) {
             response.addErrorMessage(e.getLocalizedMessage());
+            log.error(e.getLocalizedMessage());
         }
         return response;
-    }
-
-    @Override
-    @Transactional(value = TxType.REQUIRES_NEW)
-    public ServiceResponse<Recipe> deleteById(Long id) {
-
-        ServiceResponse<Recipe> response = new ServiceResponse<>();
-        Optional<Recipe> recipe = recipeRepository.findByIdFetched(id);
-        if (recipe.isPresent()) {
-
-            System.out.println("User to be deleted" + recipe.get().getUser().getFirstName());
-
-            System.out.println("Recipe with id to be deleted: " + recipe.get().getId());
-            recipeRepository.deleteById(id);
-            response.setResponseObject(recipe.get());
-        } else {
-            response.addErrorMessage(ServiceErrorMessages.RECIPE.couldNotFind(id));
-        }
-        return response;
-
     }
 
 
@@ -144,23 +123,6 @@ public class RecipeService implements ServiceInterface<Recipe> {
         return response;
     }
 
-    @Override
-    public ServiceResponse<Recipe> create(Recipe newRecipe) {
-        ServiceResponse<Recipe> response = new ServiceResponse<>();
-        try {
-            // Prevents an accidental update by discarding the id
-            newRecipe.setId(null);
-            //TODO PERMANENT USER FOR DEVELOPMENT
-            User user = userRepository.findById(1L).get();
-            newRecipe.setUser(user);
-            Recipe recipe = recipeRepository.save(newRecipe);
-            response.setResponseObject(recipe);
-        } catch (Exception e) {
-            response.addErrorMessage(e.getLocalizedMessage());
-            log.error(e.getLocalizedMessage());
-        }
-        return response;
-    }
 
     @Override
     public ServiceResponse<Recipe> patch(Long id, JsonPatch patch) {
@@ -190,6 +152,24 @@ public class RecipeService implements ServiceInterface<Recipe> {
         return objectMapper.treeToValue(patched, Recipe.class);
     }
 
+    @Override
+    @Transactional(value = TxType.REQUIRES_NEW)
+    public ServiceResponse<Recipe> deleteById(Long id) {
 
+        ServiceResponse<Recipe> response = new ServiceResponse<>();
+        Optional<Recipe> recipe = recipeRepository.findByIdFetched(id);
+        if (recipe.isPresent()) {
+
+            System.out.println("User to be deleted" + recipe.get().getUser().getFirstName());
+
+            System.out.println("Recipe with id to be deleted: " + recipe.get().getId());
+            recipeRepository.deleteById(id);
+            response.setResponseObject(recipe.get());
+        } else {
+            response.addErrorMessage(ServiceErrorMessages.RECIPE.couldNotFind(id));
+        }
+        return response;
+
+    }
 
 }

@@ -15,10 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -51,7 +49,7 @@ public class User implements Serializable {
 	private String email;
 
 	@JsonIgnore
-	@OneToMany (mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REMOVE})
+	@OneToMany (fetch = FetchType.LAZY, cascade = {CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REMOVE})
 	private Set<Recipe> recipes;
 
 
@@ -84,11 +82,20 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", age=" + age
-				+ ", profileName=" + profileName + ", password=" + password + ", accountCreated=" + accountCreated
-				+ ", email=" + email + ", recipes=" + formattedRecipes() + "]";
+		final StringBuffer sb = new StringBuffer("User{");
+		sb.append("id=").append(id);
+		sb.append(", firstName='").append(firstName).append('\'');
+		sb.append(", lastName='").append(lastName).append('\'');
+		sb.append(", age=").append(age);
+		sb.append(", profileName='").append(profileName).append('\'');
+		sb.append(", password='").append(password).append('\'');
+		sb.append(", accountCreated=").append(accountCreated);
+		sb.append(", email='").append(email).append('\'');
+		sb.append(", recipes=").append(recipes);
+		sb.append('}');
+		return sb.toString();
 	}
-	
+
 	private String formattedRecipes() {
 		StringBuilder builder = new  StringBuilder("");
 		int counter = 1;

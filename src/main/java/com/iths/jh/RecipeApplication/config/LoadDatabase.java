@@ -28,15 +28,17 @@ public class LoadDatabase {
 			IngredientRepository ingredientRepository, FoodCategoryRepository foodCategoryRepository) {
 		return args ->{
 			User user = new User("Johannes","Hedman",20,"jh","1234", LocalDate.now(),"mail@mail.com");
-			User user2 = new User("Anders","Erkson",20,"jh","1234", LocalDate.now(),"mail@mail.com");
+			User user2 = new User("Atif","Cheema",20,"ac","1234", LocalDate.now(),"mail@mail.com");
+			User user3 = new User("Adam","Traore",20,"at","1234", LocalDate.now(),"mail@mail.com");
+			User user4 = new User("Anders","Erkson",20,"ae","1234", LocalDate.now(),"mail@mail.com");
 			Recipe recipe = new Recipe("Pasta Carbonara",0L, LocalDate.now(),"1. Blanda");
 			Recipe recipe2 = new Recipe("Kött Carbonara",0L, LocalDate.now(),"1. Blanda");
 			Recipe recipe3 = new Recipe("Fisk Carbonara",0L, LocalDate.now(),"1. Blanda");
 			Recipe recipe4 = new Recipe("Manna Carbonara",0L, LocalDate.now(),"1. Blanda");
-			
-			
-			log.info("Test");
-			
+
+
+			log.info("----Load Database START----");
+
 			Ingredient ingredient = new Ingredient("Bacon");
 			ingredientRepository.save(ingredient);
 			recipe.addIngredient("500g Äpplen");
@@ -85,7 +87,10 @@ public class LoadDatabase {
 			
 			userRepository.save(user);
 			userRepository.save(user2);
-			
+			userRepository.save(user3);
+			userRepository.save(user4);
+
+			log.info("----Load Database START----");
 			
 //			recipeRepository.findAllFetched().forEach(System.out::println);;
 //			System.out.println(r);
@@ -93,7 +98,6 @@ public class LoadDatabase {
 //			System.out.println(userRepository.findByIdFetched(1L));
 				
 			
-			log.info("Preloading");
 		};
 	}
 	@Bean
