@@ -14,8 +14,7 @@ import com.iths.jh.RecipeApplication.domain.User;
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 	
 	@Query("select u from User u "
-			+ "inner join fetch u.recipes r "
-			+ "inner join fetch r.foodCategories fc "
+			+ "left join fetch u.recipes r "
 			+ "where u.id = ?1")
 	Optional<User> findByIdFetched(long id);
 

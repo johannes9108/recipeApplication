@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import com.iths.jh.RecipeApplication.domain.dto.RecipeDTO;
 import com.iths.jh.RecipeApplication.services.ServiceInterface;
 import com.iths.jh.RecipeApplication.utilities.SearchParams;
 import com.iths.jh.RecipeApplication.utilities.ServiceResponse;

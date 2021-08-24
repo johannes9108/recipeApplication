@@ -110,17 +110,18 @@ public class UserService implements ServiceInterface<User> {
 	public ServiceResponse<User> patch(Long id, JsonPatch patch) {
 		ServiceResponse<User> response = new ServiceResponse<>();
 		try {
-			User recipe = userRepository.findByIdFetched(id).orElseThrow(NoSuchElementException::new);
-			User recipePatched = applyPatchToUser(patch, recipe);
-			log.info("Updated recipe: " + recipePatched.toString());
-			System.out.println("Updated recipe: " + recipePatched.toString());
-			ServiceResponse<User> op = update(recipePatched);
+			User user = userRepository.findByIdFetched(id).orElseThrow(NoSuchElementException::new);
+			User userPatched = applyPatchToUser(patch, user);
+			log.info("Updated user: " + userPatched.toString());
+			System.out.println("Updated user: " + userPatched.toString());
+			ServiceResponse<User> op = update(userPatched);
 			if (op.isSucessful()) {
 				response.setResponseObject(op.getResponseObject());
 			} else {
-				response.addErrorMessage(ServiceErrorMessages.RECIPE.couldNotUpdate(id));
+				response.addErrorMessage(ServiceErrorMessages.USER.couldNotUpdate(id));
 			}
 		} catch (Exception e) {
+
 			response.addErrorMessage(e.getLocalizedMessage());
 		}
 		return response;

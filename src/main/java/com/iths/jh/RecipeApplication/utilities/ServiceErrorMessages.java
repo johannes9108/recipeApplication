@@ -31,6 +31,8 @@ public enum ServiceErrorMessages {
     public String couldNotUpdate() {
         return "could not update " + errorMessage;
     }
+    public String couldNotPatch(long id) { return "could not patch " + errorMessage + " with id: " + id; }
+    public String couldNotPatch() {return "could not patch " + errorMessage; }
     public String couldNotFind(long id) {
         return "could not find" + errorMessage + "with id: " + id;
     }

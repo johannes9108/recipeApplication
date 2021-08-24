@@ -17,6 +17,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Ingredient {
 
+	private boolean active;
+
 	enum IngredientPredefined{
 		MILK, WHEAT, CREAM, TOMATOES
 	}
@@ -26,7 +28,7 @@ public class Ingredient {
 	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
 	private String name;
 
