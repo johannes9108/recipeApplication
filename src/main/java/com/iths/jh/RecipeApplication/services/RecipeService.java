@@ -49,8 +49,9 @@ public class RecipeService implements ServiceInterface<Recipe> {
         ServiceResponse<Recipe> response = new ServiceResponse<Recipe>();
 
         try {
-            System.out.println("Return all Recipes");
+            log.info("Return recipe with id: " + id);
             Recipe recipe = recipeRepository.findByIdFetched(id).orElseThrow(NoSuchElementException::new);
+            log.info("Return recipe with recipe: " + recipe);
             response.setResponseObject(recipe);
         } catch (Exception e) {
             response.addErrorMessage(e.getLocalizedMessage());
@@ -63,8 +64,9 @@ public class RecipeService implements ServiceInterface<Recipe> {
         try {
             System.out.println("Return all Recipes");
             Pageable pageable = PageRequest.of(page>=1?page-1:0, Math.max(size, 1));
-            List<Recipe> listOfRecipes = recipeRepository.findAllFetched(pageable);
-            response.setResponseObjects(listOfRecipes);
+            Page<Recipe> pagedRecipes = recipeRepository.findAll(pageable);
+            response.setResponseObjects(pagedRecipes.getContent());
+            response.setTotalItems(pagedRecipes.getTotalElements());
         } catch (Exception e) {
             response.addErrorMessage(e.getLocalizedMessage());
         }
@@ -79,6 +81,7 @@ public class RecipeService implements ServiceInterface<Recipe> {
             Pageable pageable = PageRequest.of(page>=1?page-1:0, Math.max(size, 1));
             Page<Recipe> pagedRecipes = recipeRepository.findAllFetched(searchParams, pageable);
             response.setResponseObjects(pagedRecipes.getContent());
+            response.setTotalItems(pagedRecipes.getTotalElements());
         } catch (Exception e) {
             response.addErrorMessage(e.getLocalizedMessage());
         }
@@ -111,6 +114,7 @@ public class RecipeService implements ServiceInterface<Recipe> {
         try {
             Recipe recipeToBeUpdated = recipeRepository.findByIdFetched(newData.getId()).orElseThrow(NoSuchElementException::new);
             recipeToBeUpdated = newData;
+            log.info("Data for updating:" + newData);
 //				if(newData.getFoodCategories()==null)
 //					newData.setFoodCategories(new HashSet<FoodCategory>());
             Recipe recipe = recipeRepository.save(recipeToBeUpdated);
@@ -159,12 +163,14 @@ public class RecipeService implements ServiceInterface<Recipe> {
         ServiceResponse<Recipe> response = new ServiceResponse<>();
         Optional<Recipe> recipe = recipeRepository.findByIdFetched(id);
         if (recipe.isPresent()) {
+            Recipe actualRecipe = recipe.get();
+            System.out.println("User to whom the chosen recipe belongs to: " + actualRecipe.getUser().getFirstName());
 
-            System.out.println("User to be deleted" + recipe.get().getUser().getFirstName());
-
-            System.out.println("Recipe with id to be deleted: " + recipe.get().getId());
+            System.out.println("Recipe with id to be deleted: " + actualRecipe.getId());
+            actualRecipe.prepareRemoval();
+            recipeRepository.save(actualRecipe);
             recipeRepository.deleteById(id);
-            response.setResponseObject(recipe.get());
+            response.setResponseObject(actualRecipe);
         } else {
             response.addErrorMessage(ServiceErrorMessages.RECIPE.couldNotFind(id));
         }

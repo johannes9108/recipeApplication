@@ -68,8 +68,8 @@ public class UserController {
 	}
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, path = "search")
-    public ResponseEntity<List<UserDTO>> getAllUsers(@RequestBody SearchParams searchParams, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
-        logger.warn(searchParams.toString());
+    public ResponseEntity<List<UserDTO>> getAllUsers(@RequestBody @Valid SearchParams searchParams, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+        logger.info(searchParams.toString());
         System.out.println("page: " + page + ", size: " + size );
         ServiceResponse<User> response = userService.findAll(searchParams, page, size);
         if (response.isSucessful()) {

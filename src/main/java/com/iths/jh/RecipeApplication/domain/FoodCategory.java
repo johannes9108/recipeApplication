@@ -1,15 +1,15 @@
 package com.iths.jh.RecipeApplication.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.NaturalId;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -21,9 +21,19 @@ public class FoodCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String name;
-    private boolean active;
 
+    @ManyToMany(mappedBy = "foodCategories")
+    @JsonIgnore
+    private Set<Recipe> recipes;
+
+    @PreRemove
+    private void removeRecipesFromFoodCategory() {
+        for (Recipe r : recipes) {
+            r.getFoodCategories().remove(this);
+        }
+    }
 
     public enum FoodCategoryPredefined {
         VEGAN, DAIRY, MEAT, FISH
@@ -36,6 +46,7 @@ public class FoodCategory {
     public FoodCategory(FoodCategoryPredefined name) {
         this.name = name.toString();
     }
+
 
 
     @Override

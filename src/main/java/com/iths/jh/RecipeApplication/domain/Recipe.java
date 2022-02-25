@@ -9,6 +9,7 @@ import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -83,6 +84,8 @@ public class Recipe implements Serializable {
 //	@JoinTable(name = "R_FC",joinColumns = @JoinColumn(name="recipeID"),
 //			inverseJoinColumns  = @JoinColumn(name="foodCategoryId"))
 	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "recipeCategories",joinColumns = @JoinColumn(name = "recipe_ID"),
+	inverseJoinColumns = @JoinColumn(name = "foodCategory_ID"))
 	private Set<FoodCategory> foodCategories;
 
 
@@ -90,12 +93,14 @@ public class Recipe implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
-	public Recipe(String title, Long views, LocalDate publishedDate, String instructions) {
+	public Recipe(String title, Long views, LocalDate publishedDate, String instructions, int cookingTime, int preparingTime) {
 		super();
 		this.title = title;
 		this.views = views;
 		this.publishedDate = publishedDate;
 		this.instructions = instructions;
+		this.cookingTime = cookingTime;
+		this.preparingTime = preparingTime;
 		foodCategories = new HashSet<>();
 		ingredientEntries = new LinkedList<>();
 	}
@@ -103,7 +108,7 @@ public class Recipe implements Serializable {
 	@Override
 	public String toString() {
 		String userString = user != null ? user.fullName() : "No user";
-		String ingredientsString = ingredientEntries.size()>0? formattedIngredients() : "No ingredients";
+		String ingredientsString = ingredientEntries != null && ingredientEntries.size()>0? formattedIngredients() : "No ingredients";
 		return "Recipe [id=" + id + ", title=" + title + ", views=" + views + ", publishedDate=" + publishedDate
 				+ ", instructions=" + instructions + ", ingredients=" + ingredientsString + ", foodCategories="
 				+ foodCategories + ", user=" + userString + "]";
@@ -128,5 +133,17 @@ public class Recipe implements Serializable {
 
 	public void addIngredient(String s) {
 		ingredientEntries.add(s);
+	}
+
+	public void prepareRemoval(){
+		try{
+		this.user.removeRecipe(this);
+//		this.user = null;
+//		this.foodCategories = null;
+		this.ingredientEntries = null;
+
+		}catch (Exception e){
+			System.err.print(e.getLocalizedMessage());
+		}
 	}
 }

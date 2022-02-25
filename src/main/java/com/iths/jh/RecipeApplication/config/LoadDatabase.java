@@ -28,28 +28,37 @@ public class LoadDatabase {
 			IngredientRepository ingredientRepository, FoodCategoryRepository foodCategoryRepository) {
 		return args ->{
 			User user = new User("Johannes","Hedman",20,"jh","1234", LocalDate.now(),"mail@mail.com");
-			User user2 = new User("Atif","Cheema",20,"ac","1234", LocalDate.now(),"mail@mail.com");
+			User user2 = new User("Anonym","Trosk",20,"ac","1234", LocalDate.now(),"mail@mail.com");
 			User user3 = new User("Adam","Traore",20,"at","1234", LocalDate.now(),"mail@mail.com");
 			User user4 = new User("Anders","Erkson",20,"ae","1234", LocalDate.now(),"mail@mail.com");
-			Recipe recipe = new Recipe("Pasta Carbonara",0L, LocalDate.now(),"1. Blanda");
-			Recipe recipe2 = new Recipe("Kött Carbonara",0L, LocalDate.now(),"1. Blanda");
-			Recipe recipe3 = new Recipe("Fisk Carbonara",0L, LocalDate.now(),"1. Blanda");
-			Recipe recipe4 = new Recipe("Manna Carbonara",0L, LocalDate.now(),"1. Blanda");
+			Recipe recipe = new Recipe("MEAT Carbonara",15L, LocalDate.now(),"1. Blanda", 10,15);
+			Recipe recipe2 = new Recipe("VEGAN Carbonara",35L, LocalDate.now(),"1. Blanda",30,50);
+			Recipe recipe3 = new Recipe("FISH Carbonara",55L, LocalDate.now(),"1. Blanda",50,666);
+			Recipe recipe4 = new Recipe("MIX Carbonara",20L, LocalDate.now(),"1. Blanda",999,2);
 
 
 			log.info("----Load Database START----");
-
-			Ingredient ingredient = new Ingredient("Bacon");
+		// TODO FIX PROPER INGREDIENTS
+			Ingredient ingredient = new Ingredient("BACON");
 			ingredientRepository.save(ingredient);
-			recipe.addIngredient("500g Äpplen");
-			recipe2.addIngredient("3kg Vit Bröd");
-			ingredient = new Ingredient("Apples");
+			ingredient = new Ingredient("APPLE");
+			ingredientRepository.save(ingredient);
+			ingredient = new Ingredient("MINCED MEAT");
+			ingredientRepository.save(ingredient);
+			ingredient = new Ingredient("PEAR");
+			ingredientRepository.save(ingredient);
+			ingredient = new Ingredient("OIL");
+			ingredientRepository.save(ingredient);
+			ingredient = new Ingredient("EGG");
+			ingredientRepository.save(ingredient);
+			recipe.addIngredient("500g APPLE");
+			recipe2.addIngredient("3kg EGG");
 //			ingredientRepository.save(ingredient);
-			recipe2.addIngredient("500g Päron");
+			recipe2.addIngredient("500g PEAR");
 //			ingredient = new Ingredient("Mushrooms");
 //			ingredientRepository.save(ingredient);
-			recipe3.addIngredient("200g Nötkött");
-			recipe4.addIngredient("1 Msk  Rapsolja");
+			recipe3.addIngredient("200g MINCED_MEAT");
+			recipe4.addIngredient("1 Msk  OIL");
 			FoodCategory foodCategory = new FoodCategory(FoodCategory.FoodCategoryPredefined.MEAT);
 			foodCategoryRepository.save(foodCategory);
 			recipe.addFoodCategory(foodCategory);
@@ -61,20 +70,18 @@ public class LoadDatabase {
 			foodCategoryRepository.save(foodCategory);
 			recipe3.addFoodCategory(foodCategory);
 			user.addRecipe(recipe3);
-			
+			recipe4.addFoodCategory(foodCategory);
 			
 			user2.addRecipe(recipe2);
-			foodCategory = new FoodCategory(FoodCategory.FoodCategoryPredefined.MEAT);
-			foodCategoryRepository.save(foodCategory);
 			recipe2.addFoodCategory(foodCategory);
 			foodCategory = new FoodCategory("SPICY");
 			foodCategoryRepository.save(foodCategory);
 			recipe4.addFoodCategory(foodCategory);
-			
+
 			user2.addRecipe(recipe4);
 //			recipe4.getFoodCategories().add(foodCategory);
-			
-			
+
+
 			
 //			recipeRepository.save(recipe);
 //			recipeRepository.save(recipe2);

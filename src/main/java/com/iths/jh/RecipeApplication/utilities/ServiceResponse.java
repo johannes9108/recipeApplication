@@ -15,6 +15,15 @@ public class ServiceResponse<T> {
     private List<T> responseObjects;
     private T responseObject;
     private List<String> errorMessages;
+    private long totalItems;
+
+    public long getTotalItems() {
+        return totalItems;
+    }
+
+    public void setTotalItems(long totalItems) {
+        this.totalItems = totalItems;
+    }
 
     public ServiceResponse() {
         this.responseObjects = new ArrayList<T>();

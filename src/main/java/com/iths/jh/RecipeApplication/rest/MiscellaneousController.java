@@ -90,7 +90,7 @@ public class MiscellaneousController {
 		}
 	}
 
-	@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "/ingredients/")
+	@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "ingredients")
 	public ResponseEntity<Ingredient> updateIngredient(@RequestBody Ingredient newIngredient) {
 
 		ServiceResponse<Ingredient> response = ingredientService.update(newIngredient);
@@ -102,7 +102,7 @@ public class MiscellaneousController {
 		}
 	}
 
-	@PatchMapping(path = "/ingredients/{id}", consumes = "application/json-patch+json",produces = {MediaType.APPLICATION_JSON_VALUE})
+	@PatchMapping(path = "ingredients/{id}", consumes = "application/json-patch+json",produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Ingredient> patchIngredient(@PathVariable Long id, @RequestBody JsonPatch patch) {
 		ServiceResponse<Ingredient> response = ingredientService.patch(id,patch);
 		if (response.isSucessful()) {
@@ -122,7 +122,7 @@ public class MiscellaneousController {
 			return ResponseEntity.ok(response.getResponseObject());
 		}
 		else{
-			return ResponseEntity.ok().build();
+			return ResponseEntity.badRequest().build();
 		}
 	}
 
@@ -154,8 +154,8 @@ public class MiscellaneousController {
 		}
 	}
 
-	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, path = "/foodcategories")
-	public ResponseEntity<List<FoodCategory>> getAllFoodCategories(@RequestBody SearchParams searchParams, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, path = "/foodcategories/search")
+	public ResponseEntity<List<FoodCategory>> getAllFoodCategories(@RequestBody @Valid SearchParams searchParams, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
 		logger.warn(searchParams.toString());
 		System.out.println("page: " + page + ", size: " + size );
 		ServiceResponse<FoodCategory> response = foodCategoryService.findAll(searchParams, page, size);
@@ -215,7 +215,7 @@ public class MiscellaneousController {
 			return ResponseEntity.ok(response.getResponseObject());
 		}
 		else{
-			return ResponseEntity.ok().build();
+			return ResponseEntity.badRequest().build();
 		}
 	}
 

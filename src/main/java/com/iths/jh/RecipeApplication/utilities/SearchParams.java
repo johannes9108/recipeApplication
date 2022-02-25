@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class SearchParams {
     /*
     * @userName
     * */
-
+    @NotNull
     private String searchQuery;
 
     @Override
@@ -41,5 +42,12 @@ public class SearchParams {
         sb.append(", searchQuery='").append(searchQuery).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public boolean isEmpty(){
+        System.out.println(words + ":" + categoryList + ":" + ingredientList);
+        return
+                (words==null && categoryList == null && ingredientList == null) ||
+                        (words.isEmpty() && categoryList.isEmpty() && ingredientList.isEmpty());
     }
 }

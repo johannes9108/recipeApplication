@@ -1,8 +1,11 @@
 package com.iths.jh.RecipeApplication.domain.dto;
 
+import com.iths.jh.RecipeApplication.domain.FoodCategory;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Data
 public class RecipeDTO{
@@ -14,5 +17,7 @@ public class RecipeDTO{
     private int cookingTime;
     private int preparingTime;
     private Long views;
+    private Set<FoodCategory> foodCategories;
+    private List<String> ingredientEntries;
 
 }

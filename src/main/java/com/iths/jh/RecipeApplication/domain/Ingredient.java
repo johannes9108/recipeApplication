@@ -1,9 +1,6 @@
 package com.iths.jh.RecipeApplication.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import org.hibernate.annotations.NaturalId;
 
@@ -17,7 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Ingredient {
 
-	private boolean active;
 
 	enum IngredientPredefined{
 		MILK, WHEAT, CREAM, TOMATOES
@@ -29,7 +25,8 @@ public class Ingredient {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
+	@Column(unique = true)
 	private String name;
 
 	@Override

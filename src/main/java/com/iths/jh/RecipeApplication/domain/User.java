@@ -121,7 +121,13 @@ public class User implements Serializable {
 			throw new Exception("Couldn't add new Recipe");
 		}
 	}
-	
-	
-	
+
+    public void removeRecipe(Recipe recipe) throws Exception{
+    	try{
+    		this.recipes.remove(recipe);
+		}
+		catch(Exception e) {
+			throw new Exception("Couldn't REMOVE new Recipe");
+		}
+	}
 }

@@ -25,7 +25,7 @@ public class HomeController {
 		@RequestMapping("/")
 	    public String index(){
 	        System.out.println("Home Page");
-	        return "Welcome";
+	        return "Hello, World";
 	    }
 
 }

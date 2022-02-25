@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -56,32 +57,47 @@ public class RecipeController {
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<RecipeDTO>> getAllRecipes(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ServerResponse<RecipeDTO>> getAllRecipes(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
         ServiceResponse<Recipe> response = recipeService.findAll(page, size);
         if (response.isSucessful()) {
             response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
-            return ResponseEntity.ok(response.getResponseObjects().stream().map(entity -> {
-                        return DTOUtilities.convertToDto(entity, RecipeDTO.class,modelMapper);
-                    }
-            ).collect(Collectors.toList()));
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("pageTotalItems", String.valueOf(response.getTotalItems()));
+            return generateServerResponse(page, size, response);
+
         } else {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
     }
 
+
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, path = "search")
-    public ResponseEntity<List<RecipeDTO>> getAllRecipes(@RequestBody SearchParams searchParams, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ServerResponse<RecipeDTO>> getAllRecipes(@RequestBody @Valid SearchParams searchParams, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
         logger.warn(searchParams.toString());
         System.out.println("page: " + page + ", size: " + size);
-        ServiceResponse<Recipe> response = recipeService.findAll(searchParams, page, size);
-        if (response.isSucessful()) {
-            response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
-            return ResponseEntity.ok(response.getResponseObjects().stream().map(entity -> {
-                return DTOUtilities.convertToDto(entity, RecipeDTO.class,modelMapper);
-            }).collect(Collectors.toList()));
+        if (searchParams.isEmpty()) {
+            return getAllRecipes(page, size);
         } else {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+
+            ServiceResponse<Recipe> response = recipeService.findAll(searchParams, page, size);
+            if (response.isSucessful()) {
+                response.getResponseObjects().forEach((recipe) -> System.out.println("User: " + recipe.getUser().fullName()));
+
+                return generateServerResponse(page, size, response);
+            } else {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+            }
         }
+    }
+    private ResponseEntity<ServerResponse<RecipeDTO>> generateServerResponse(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, ServiceResponse<Recipe> response) {
+        ServerResponse.Builder<RecipeDTO> builder = new ServerResponse.Builder<>();
+        builder.resultList(response.getResponseObjects().stream().map(entity -> {
+            return DTOUtilities.convertToDto(entity, RecipeDTO.class, modelMapper);
+        }).collect(Collectors.toList()));
+        builder.totalItems(response.getTotalItems());
+        builder.currentPage(page);
+        builder.size(size);
+        return ResponseEntity.ok(builder.build());
     }
 
 
@@ -100,7 +116,6 @@ public class RecipeController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Recipe> updateRecipe(@RequestBody Recipe newRecipe) {
-
         ServiceResponse<Recipe> response = recipeService.update(newRecipe);
         if (response.isSucessful()) {
             return ResponseEntity.ok(response.getResponseObject());
@@ -119,7 +134,6 @@ public class RecipeController {
         }
     }
 
-
     @DeleteMapping(value = "{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Recipe> deleteRecipe(@PathVariable Long id) {
         ServiceResponse<Recipe> response = recipeService.deleteById(id);
@@ -129,6 +143,5 @@ public class RecipeController {
             return ResponseEntity.badRequest().build();
         }
     }
-
 
 }

@@ -30,6 +30,9 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeRep
 			+ " left join fetch r.foodCategories ")
 	List<Recipe> findAllFetched(Pageable pageable);
 
+	@Override
+	Page<Recipe> findAll(Pageable pageable);
+
 	default ServiceResponse<Recipe> deleteByIdWithReturnValue(Long id){
 		Optional<Recipe> deleteObject = findByIdFetched(id);
 		if (deleteObject.isPresent()) {
